@@ -14,25 +14,23 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    name: '',
-    number: '',
   };
-  handelAddContact = e => {
-    e.preventDefault();
+  handleAddContact = (e, callback) => {
     const newContact = {
       id: nanoid(),
-      name: this.state.name,
-      number: this.state.number,
+      name: e.target.elements.name.value,
+      number: e.target.elements.number.value,
     };
-    const check = this.state.contacts.some(obj => obj.name === newContact.name);
-    if (check) {
+    const isContact = this.state.contacts.some(
+      obj => obj.name === newContact.name
+    );
+    if (isContact) {
       swal({
         title: newContact.name,
         text: 'Is already in contacts!',
         icon: 'info',
-        // button: 'Aww yiss!',
       });
-      this.setState({ name: '', number: '' });
+      callback();
       return;
     }
     this.setState(prevState => {
@@ -40,8 +38,9 @@ export class App extends Component {
         contacts: [...prevState.contacts, newContact],
       };
     });
-    this.setState({ name: '', number: '' });
+    callback();
   };
+
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
@@ -56,11 +55,7 @@ export class App extends Component {
     return (
       <div className="maine_box ">
         <h1 className="h1 mt-2">Phonebook</h1>
-        <FormAddContacts
-          handelAddContact={this.handelAddContact}
-          state={this.state}
-          handleChange={this.handleChange}
-        />
+        <FormAddContacts handleAddContact={this.handleAddContact} />
         <h2 className="h2 mt-3">Contacts</h2>
         <Filter state={this.state} handleChange={this.handleChange} />
         <ContactsList
