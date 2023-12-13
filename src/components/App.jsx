@@ -15,14 +15,15 @@ export class App extends Component {
     ],
     filter: '',
   };
-  handleAddContact = (e, callback) => {
+  handleAddContact = (contact, callbackCleanForm) => {
     const newContact = {
       id: nanoid(),
-      name: e.target.elements.name.value,
-      number: e.target.elements.number.value,
+      name: contact.name,
+      number: contact.number,
     };
     const isContact = this.state.contacts.some(
-      obj => obj.name === newContact.name
+      obj =>
+        obj.name.trim().toLowerCase() === newContact.name.trim().toLowerCase()
     );
     if (isContact) {
       swal({
@@ -30,7 +31,7 @@ export class App extends Component {
         text: 'Is already in contacts!',
         icon: 'info',
       });
-      callback();
+      callbackCleanForm();
       return;
     }
     this.setState(prevState => {
@@ -38,7 +39,7 @@ export class App extends Component {
         contacts: [...prevState.contacts, newContact],
       };
     });
-    callback();
+    callbackCleanForm();
   };
 
   handleChange = e => {
@@ -50,6 +51,12 @@ export class App extends Component {
     const newContacts = this.state.contacts.filter(({ id }) => id !== idBtn);
     this.setState({ contacts: newContacts });
   };
+  arreyContactsFiltered = () =>
+    this.state.contacts.filter(
+      ({ name }) =>
+        !this.state.filter ||
+        name.toLowerCase().includes(this.state.filter.trim().toLowerCase())
+    );
 
   render() {
     return (
@@ -59,8 +66,7 @@ export class App extends Component {
         <h2 className="h2 mt-3">Contacts</h2>
         <Filter state={this.state} handleChange={this.handleChange} />
         <ContactsList
-          array={this.state.contacts}
-          filter={this.state.filter}
+          array={this.arreyContactsFiltered()}
           handleDeleteContact={this.handleDeleteContact}
         />
       </div>

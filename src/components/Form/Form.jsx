@@ -12,7 +12,13 @@ export class FormAddContacts extends Component {
   };
   handleSubmit = e => {
     e.preventDefault();
-    this.props.handleAddContact(e, this.clean);
+    this.props.handleAddContact(
+      {
+        name: this.state.name,
+        number: this.state.number,
+      },
+      this.clean
+    );
   };
   clean = () => this.setState({ name: '', number: '' });
   render() {
